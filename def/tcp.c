@@ -47,7 +47,7 @@ int recv_all(int socket, void *buffer, size_t length) {
 void recv_file(int sockfd) {
   int n;
   double cont = 0;
-  FILE *fp;
+  FILE *fp, *fp2;
   struct data_t data_recibida;
   n = recv_all(sockfd, &data_recibida, sizeof(data_recibida));
   if (n <= 0) {
@@ -55,18 +55,19 @@ void recv_file(int sockfd) {
     return;
   }
   char *buffer = malloc(data_recibida.size);
-  fp = fopen(data_recibida.name, "w");
+  fp = fopen("recibido_enc", "w");
   if (fp == NULL) {
     printf("[-] Error al crear archivo");
     return;
   }
   n = recv_all(sockfd, buffer, data_recibida.size);
-  char *c = "d";
-  decrypt_file("llave.key", data_recibida.name, c);
   if (n <= 0)
     return;
+  char *c = "d";
   fwrite(buffer, 1, data_recibida.size, fp);
   fclose(fp);
+
+  decrypt_file("llave.key", "recibido_enc", data_recibida.name);
 }
 
 void encrypt_file(char *key_file, char *in_file, char *out_file) {
