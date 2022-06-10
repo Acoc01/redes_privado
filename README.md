@@ -1,6 +1,6 @@
 # redes_privado
 
-##Compilar
+## Compilar
 Para compilar el código se necesita tener la biblioteca ***SODIUM*** y también contar con ***CMAKE*** instalados.
 Primero se debe crear una carpeta "build" en el directorio donde se clonó el repositorio y ejecutar los siguientes comandos en orden.
 ```
@@ -10,7 +10,7 @@ cmake --build .
 ```
 Luego de haber creado esto se crearán cuatro directorios de los cuales tres cuentan con ejecutables: "keygen", "server", "client".
 
-##Ejecutar codigo
+## Ejecutar codigo
 Para ejecutar el código primero se debe generar una clave con el ejecutable keygen en el directorio keygen de la siguiente forma:
 ```
 ./keygen llave.key
