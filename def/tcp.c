@@ -9,12 +9,15 @@
 
 int send_all(int socket, void *buffer, size_t length) {
   char *ptr = (char *)buffer;
+  double size = length;
   while (length > 0) {
     int i = send(socket, ptr, length, 0);
+    printf("%lf%c se ha enviado...\n", (size - length) / size * 100, 37);
     if (i < 1)
       return -1;
     ptr += i;
     length -= i;
+    printf("%lf%c se ha enviado...\n", (size - length) / size * 100, 37);
   }
   return 1;
 }
@@ -22,11 +25,13 @@ int send_all(int socket, void *buffer, size_t length) {
 void send_file(FILE *fp, int sockfd, struct data_t *datos) {
   char *data = malloc(datos->size);
   double cont = 0;
+  printf("[+] Enviando datos del archivo...\n");
   if (send_all(sockfd, datos, sizeof(*datos)) == -1) {
     printf("[-] Error al enviar nombre y tamanio de archivo");
     return;
   }
   fread(data, 1, datos->size, fp);
+  printf("[+] Enviando archivo encritpado...\n");
   if (send_all(sockfd, data, datos->size) == -1) {
     printf("[-] Error al enviar archivo\n");
   }
@@ -34,12 +39,15 @@ void send_file(FILE *fp, int sockfd, struct data_t *datos) {
 }
 
 int recv_all(int socket, void *buffer, size_t length) {
+  double size = length;
   while (length > 0) {
     int i = recv(socket, buffer, length, 0);
+    printf("%lf%c se ha recibido...\n", (size - length) / size * 100, 37);
     if (i < 1)
       return 0;
     buffer += i;
     length -= i;
+    printf("%lf%c se ha recibido...\n", (size - length) / size * 100, 37);
   }
   return 1;
 }
@@ -49,6 +57,7 @@ void recv_file(int sockfd) {
   double cont = 0;
   FILE *fp, *fp2;
   struct data_t data_recibida;
+  printf("[+] Recibiendo datos del archivo...\n");
   n = recv_all(sockfd, &data_recibida, sizeof(data_recibida));
   if (n <= 0) {
     printf("[-] Error al obtener nombre y tamanio\n");
@@ -60,13 +69,14 @@ void recv_file(int sockfd) {
     printf("[-] Error al crear archivo");
     return;
   }
+  printf("[+] Recibiendo archivo encriptado...\n");
   n = recv_all(sockfd, buffer, data_recibida.size);
   if (n <= 0)
     return;
   char *c = "d";
   fwrite(buffer, 1, data_recibida.size, fp);
   fclose(fp);
-
+  printf("[+] Decifrando archivo encriptado...\n");
   decrypt_file("llave.key", "recibido_enc", data_recibida.name);
 }
 
